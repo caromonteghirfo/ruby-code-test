@@ -18,7 +18,7 @@ class Checkout
 
       case item
       when :apple, :pear
-        (count % 2 == 0) ? item_price * (count / 2) : item_price * count
+        item_price * (count / 2) + item_price * (count % 2)
       when :banana
         (item_price / 2) * count
       when :pineapple
