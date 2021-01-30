@@ -11,28 +11,22 @@ class Checkout
   end
 
   def total
-    total = 0
+    basket_count = basket.inject(Hash.new(0)) { |items, item| items[item] += 1; items }
 
-    basket.inject(Hash.new(0)) { |items, item| items[item] += 1; items }.each do |item, count|
-      if item == :apple || item == :pear
-        if (count % 2 == 0)
-          total += prices.fetch(item) * (count / 2)
-        else
-          total += prices.fetch(item) * count
-        end
-      elsif item == :banana || item == :pineapple
-        if item == :pineapple
-          total += (prices.fetch(item) / 2)
-          total += (prices.fetch(item)) * (count - 1)
-        else
-          total += (prices.fetch(item) / 2) * count
-        end
+    basket_count.sum do |item, count|
+      item_price = prices.fetch(item)
+
+      case item
+      when :apple, :pear
+        (count % 2 == 0) ? item_price * (count / 2) : item_price * count
+      when :banana
+        (item_price / 2) * count
+      when :pineapple
+        (item_price / 2) + item_price * (count - 1)
       else
-        total += prices.fetch(item) * count
+        item_price * count
       end
     end
-
-    total
   end
 
   private
